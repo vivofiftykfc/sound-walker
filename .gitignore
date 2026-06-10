@@ -1,0 +1,33 @@
+# Build artifacts
+*.o
+voiceprint_lock
+voiceprint_test
+test_gmm
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data files (too large for git)
+data/LibriSpeech/
+
+# Model files
+*.onnx
+*.bin
+
+# Temp and IDE
+/tmp/
+build_arm/
+build_pc/
+.vscode/
+.idea/
+
+# Temp office files
+~$*
+
+# Binary artifacts
+embed/build_arm/
+embed/build_pc/
+embed/test_gmm
+embed/test_wav
+embed/simple_test
