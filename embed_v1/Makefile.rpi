@@ -1,0 +1,65 @@
+# Makefile.rpi - 树莓派5原生编译
+#
+# Usage:
+#   make -f Makefile.rpi          # 编译主程序
+#   make -f Makefile.rpi test     # 编译PC测试程序
+#   make -f Makefile.rpi clean    # 清理
+#
+# RPi5依赖: sudo apt install libasound2-dev
+# 麦克风: C-Media PCM2902 (hw:3)
+
+CC = gcc
+CFLAGS = -O2 -Wall -Wextra -std=gnu99 -Iinclude -I../tts/include -g
+LDFLAGS = -lm -lpthread -lsqlite3
+
+# 主程序 (需要ALSA, 纯C无外部依赖)
+SRC_MAIN = \
+    src/main/main.c \
+    src/dsp/gmm_svm.c \
+    src/mfcc_standalone.c \
+    src/mfcc_compat.c \
+    src/audio/audio_capture.c \
+    src/audio/audio_preprocess.c \
+    src/storage/storage.c \
+    ../tts/src/tts.c
+OBJ_MAIN = $(SRC_MAIN:.c=.o)
+
+# GMM算法测试 (PC端, 无ALSA)
+SRC_GMMTEST = \
+    src/test_gmm.c \
+    src/dsp/gmm_svm.c
+OBJ_GMMTEST = $(SRC_GMMTEST:.c=.o)
+
+TARGET_MAIN = voiceprint_lock
+TARGET_GMMTEST = test_gmm
+
+.PHONY: all test_gmm clean info run run-test
+
+all: $(TARGET_MAIN)
+test_gmm: $(TARGET_GMMTEST)
+
+$(TARGET_MAIN): $(OBJ_MAIN)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -lasound -o $@
+	@echo "=== Build: $@ ==="
+	@ls -lh $@
+
+$(TARGET_GMMTEST): $(OBJ_GMMTEST)
+	$(CC) $(CFLAGS) $^ -lm -o $@
+	@echo "=== Build: $@ ==="
+	@ls -lh $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJ_MAIN) $(OBJ_GMMTEST) $(TARGET_MAIN) $(TARGET_GMMTEST)
+	@echo "Cleaned"
+
+info:
+	@echo "CC: $(CC)" && $(CC) --version | head -1
+
+run: $(TARGET_MAIN)
+	./$(TARGET_MAIN)
+
+run-test: $(TARGET_TEST)
+	./$(TARGET_TEST)
