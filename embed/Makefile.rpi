@@ -1,0 +1,32 @@
+# Makefile.rpi - sherpa-onnx version
+# Deps: sudo apt install libasound2-dev
+#        pip install sherpa-onnx
+# Model: models/3dspeaker_speech_campplus_sv_zh-cn_16k_common.onnx
+
+CC = gcc
+CONDA_PREFIX = $(HOME)/miniconda3
+SHERPA_DIR = $(CONDA_PREFIX)/lib/python3.13/site-packages/sherpa_onnx
+
+CFLAGS = -O2 -Wall -std=gnu99 -Iinclude -I../tts/include -I$(SHERPA_DIR)/include -g -DRPI_BUILD
+LDFLAGS = -lm -lpthread -lsqlite3 -L$(SHERPA_DIR)/lib -lsherpa-onnx-c-api -lonnxruntime
+
+SRCS = src/main/main.c src/dsp/gmm_svm.c src/audio/audio_capture.c src/storage/storage.c ../tts/src/tts.c
+OBJS = $(SRCS:.c=.o)
+TARGET = voiceprint_lock
+
+.PHONY: all clean info
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -lasound -Wl,-rpath,$(SHERPA_DIR)/lib -o $@
+	@ls -lh $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+info:
+	@echo "INC: $(SHERPA_INC)" && echo "LIB: $(SHERPA_LIB)"

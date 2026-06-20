@@ -1,0 +1,27 @@
+# ARM Cross Compile Makefile
+CC = /usr/local/arm/arm-2014.05/bin/arm-none-linux-gnueabi-gcc
+CFLAGS = -static -march=armv7-a -mtune=cortex-a8 -O2 -Wall -std=c99 -Iinclude
+LDFLAGS = -lm -lpthread
+
+# Source files
+SRC = src/mfcc_standalone.c src/vad.c src/simple_test.c
+OBJ = build_arm/simple_test.o build_arm/mfcc_standalone.o build_arm/vad.o
+
+TARGET = build_arm/voiceprint_test
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	@mkdir -p build_arm
+	$(CC) $(LDFLAGS) $(OBJ) -o $@
+	@echo "Build: $@"
+	@ls -lh $@
+
+build_arm/%.o: src/%.c
+	@mkdir -p build_arm
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf build_arm
+
+.PHONY: all clean
