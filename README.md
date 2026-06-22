@@ -2,6 +2,8 @@
 
 ARM 嵌入式 Linux 平台实现离线声纹注册与识别。两条技术路线在同一硬件平台上实现并对比。
 
+演示地址：[【【大作业】声纹锁：MFCC+DTW vs CAM++神经网络 演示】 ](https://www.bilibili.com/video/BV1HJ7P6oE8r/?share_source=copy_web&vd_source=a46bd1f34ae458cc54764fa7c96aeaa4)
+
 ## 路线对比
 
 | 维度 | v1: MFCC + DTW | v2: sherpa-onnx + CAM++ |
