@@ -15,7 +15,6 @@ ARM 嵌入式 Linux 平台实现离线声纹注册与识别。两条技术路线
 
 ## 硬件
 
-- 主控：Raspberry Pi 5 (Debian Bookworm)
 - 麦克风：C-Media PCM2902 (USB, 44100Hz)
 - TTS：SNR9816TTS (UART 115200)
 - 存储：SQLite 3
